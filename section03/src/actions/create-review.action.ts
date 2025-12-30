@@ -2,13 +2,16 @@
 
 import { revalidateTag } from "next/cache";
 
-export async function createReviewAction(formData: FormData) {
+export async function createReviewAction(_: any, formData: FormData) {
   const bookId = formData.get("bookId")?.toString();
   const content = formData.get("content")?.toString();
   const author = formData.get("author")?.toString();
 
   if (!content || !author) {
-    return;
+    return {
+      status: false,
+      error: "리뷰 내용과 작성자를 입력해 주세요.",
+    };
   }
 
   try {
@@ -23,8 +26,6 @@ export async function createReviewAction(formData: FormData) {
         }),
       }
     );
-    console.log(res.status);
-
     // 1. 특정 주소의 해당하는 페이지만 재검증
     // revalidatePath(`/book/${bookId}`);
 
@@ -38,9 +39,20 @@ export async function createReviewAction(formData: FormData) {
     // revalidatePath('/', "layout");
 
     // 5. 태그 기준. 데이터 캐시 재검증
-    revalidateTag(`review-${bookId}`, "profile");
+    // revalidateTag(`review-${bookId}`);
+
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+    revalidateTag(`review-${bookId}`);
+    return {
+      status: true,
+      error: "",
+    };
   } catch (e) {
-    console.error(e);
-    return;
+    return {
+      status: false,
+      error: `리뷰 저장에 실패했습니다 : ${e}`,
+    };
   }
 }
