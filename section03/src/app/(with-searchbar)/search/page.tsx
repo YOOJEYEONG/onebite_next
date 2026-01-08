@@ -1,4 +1,3 @@
-import { delay } from "@/app/util/delay";
 import BookItem from "@/components/book-item";
 import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 import { BookData } from "@/types";
@@ -8,7 +7,6 @@ import { Suspense } from "react";
 // export const dynamic = "error";
 
 async function SearchResult({ q }: { q: string }) {
-  await delay(1500);
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/search?q=${q}`,
     { cache: "force-cache" }
