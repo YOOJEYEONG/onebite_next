@@ -25,7 +25,7 @@ export async function deleteReviewAction(_: any, formData: FormData) {
       throw new Error(res.statusText);
     }
 
-    revalidateTag(`review-${bookId}`);
+    revalidateTag(`review-${bookId}`, "max");
     return {
       status: true,
       error: "",

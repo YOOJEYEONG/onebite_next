@@ -1,6 +1,6 @@
 import ReviewEditor from "@/components/review-editor";
 import ReviewItem from "@/components/review-item";
-import { ReviewData } from "@/types";
+import { BookData, ReviewData } from "@/types";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import style from "./page.module.css";
@@ -67,6 +67,30 @@ async function ReviewList({ bookId }: { bookId: string }) {
       ))}
     </section>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${id}`
+  );
+
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+
+  const book: BookData = await res.json();
+
+  return {
+    title: `${book.title} - 한입북스`,
+    description: `${book.description}`,
+    images: [book.coverImgUrl],
+  };
 }
 
 export default async function Page({
